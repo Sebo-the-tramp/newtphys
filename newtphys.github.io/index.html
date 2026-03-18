@@ -456,15 +456,58 @@
         </div>
         <div style="width: 100%; overflow: hidden;">
           <iframe
+            id="interactive-vqa-frame"
             src="./nerfies.html"
             title="Interactive NewtPhys VQA viewer"
             loading="lazy"
             scrolling="no"
             width="100%"
-            height="300"
+            height="600"
             style="border: 0; display: block; max-width: 100%;">
           </iframe>
         </div>
+        <script>
+          (function () {
+            const iframe = document.getElementById('interactive-vqa-frame');
+            if (!iframe) return;
+
+            const resizeIframe = () => {
+              try {
+                const doc = iframe.contentDocument || iframe.contentWindow.document;
+                if (!doc) return;
+
+                const body = doc.body;
+                const html = doc.documentElement;
+                const height = Math.max(
+                  body ? body.scrollHeight : 0,
+                  body ? body.offsetHeight : 0,
+                  html ? html.scrollHeight : 0,
+                  html ? html.offsetHeight : 0
+                );
+
+                if (height) {
+                  iframe.style.height = height + 'px';
+                }
+              } catch (error) {
+                // Same-origin iframe; ignore unexpected layout probing failures.
+              }
+            };
+
+            iframe.addEventListener('load', function () {
+              resizeIframe();
+              window.setTimeout(resizeIframe, 150);
+            });
+
+            window.addEventListener('resize', function () {
+              resizeIframe();
+              window.setTimeout(resizeIframe, 150);
+            });
+
+            if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
+              resizeIframe();
+            }
+          })();
+        </script>
         <div class="has-text-centered" id="vqa-portal-note" style="margin-top: 1rem;">
           <!-- <p class="is-size-7">
             Placeholder for the dedicated interactive VQA website. Once that external URL exists, replace the current placeholder targets with that link.
