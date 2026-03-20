@@ -41,6 +41,7 @@
       <a class="navbar-item" href="#abstract">Abstract</a>
       <a class="navbar-item" href="#dataset">Dataset</a>
       <a class="navbar-item" href="#benchmark">Benchmark</a>
+      <a class="navbar-item" href="./data_viewer/">Dataset Viewer</a>
       <a class="navbar-item" href="#results">Results</a>
       <a class="navbar-item" href="#BibTeX">BibTeX</a>
     </div>
@@ -81,16 +82,16 @@
           <div class="column has-text-centered">
             <div class="publication-links">
               <span class="link-block">
-                <a href="#abstract"
+                <a href="https://example.com/paper"
                    class="external-link button is-normal is-rounded is-dark">
                   <span class="icon">
-                      <i class="fas fa-align-left"></i>
+                      <i class="far fa-file-alt"></i>
                   </span>
-                  <span>Abstract</span>
+                  <span>Paper</span>
                 </a>
               </span>
               <span class="link-block">
-                <a href="#dataset"
+                <a href="https://example.com/dataset"
                    class="external-link button is-normal is-rounded is-dark">
                   <span class="icon">
                       <i class="far fa-images"></i>
@@ -99,21 +100,12 @@
                 </a>
               </span>
               <span class="link-block">
-                <a href="#benchmark"
+                <a href="./data_viewer/"
                    class="external-link button is-normal is-rounded is-dark">
                   <span class="icon">
-                      <i class="fas fa-tasks"></i>
+                      <i class="fas fa-table"></i>
                   </span>
-                  <span>Benchmark</span>
-                </a>
-              </span>
-              <span class="link-block">
-                <a href="#vqa-portal-note"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                      <i class="fas fa-external-link-alt"></i>
-                  </span>
-                  <span>Interactive VQA</span>
+                  <span>Dataset Viewer</span>
                 </a>
               </span>
               <span class="link-block">
@@ -384,7 +376,7 @@
         </div>
 
         <div class="has-text-centered" style="margin-bottom: 1.5rem;">
-          <a href="#vqa-portal-note"
+          <a href="./data_viewer/"
              class="external-link button is-normal is-rounded is-dark">
             <span class="icon">
                 <i class="fas fa-search"></i>
@@ -457,7 +449,7 @@
         <h3 class="title is-4">Interactive VQA Viewer</h3>
         <div class="content has-text-justified"> 
         </div>
-        <div style="width: 100%; overflow: hidden;">
+        <div style="width: 100%; overflow: hidden; display: flex; justify-content: center;">
           <iframe
             id="interactive-vqa-frame"
             src="./nerfies.html"
@@ -465,52 +457,10 @@
             loading="lazy"
             scrolling="no"
             width="100%"
-            height="600"
-            style="border: 0; display: block; max-width: 100%;">
+            height="400"
+            style="border: 0px; display: block; width: 100%; max-width: 100%; margin: 0px auto; height: 400px;">
           </iframe>
         </div>
-        <script>
-          (function () {
-            const iframe = document.getElementById('interactive-vqa-frame');
-            if (!iframe) return;
-
-            const resizeIframe = () => {
-              try {
-                const doc = iframe.contentDocument || iframe.contentWindow.document;
-                if (!doc) return;
-
-                const body = doc.body;
-                const html = doc.documentElement;
-                const height = Math.max(
-                  body ? body.scrollHeight : 0,
-                  body ? body.offsetHeight : 0,
-                  html ? html.scrollHeight : 0,
-                  html ? html.offsetHeight : 0
-                );
-
-                if (height) {
-                  iframe.style.height = height + 'px';
-                }
-              } catch (error) {
-                // Same-origin iframe; ignore unexpected layout probing failures.
-              }
-            };
-
-            iframe.addEventListener('load', function () {
-              resizeIframe();
-              window.setTimeout(resizeIframe, 150);
-            });
-
-            window.addEventListener('resize', function () {
-              resizeIframe();
-              window.setTimeout(resizeIframe, 150);
-            });
-
-            if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
-              resizeIframe();
-            }
-          })();
-        </script>
         <div class="has-text-centered" id="vqa-portal-note" style="margin-top: 1rem;">
           <!-- <p class="is-size-7">
             Placeholder for the dedicated interactive VQA website. Once that external URL exists, replace the current placeholder targets with that link.

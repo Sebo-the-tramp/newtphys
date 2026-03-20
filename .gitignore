@@ -21,3 +21,5 @@ main.synctex.gz
 !/.github/workflows/**
 !/newtphys.github.io/
 !/newtphys.github.io/**
+!/data_viewer/
+!/data_viewer/**
