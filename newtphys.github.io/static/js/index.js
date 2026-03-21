@@ -19,6 +19,117 @@ function setInterpolationImage(i) {
   $('#interpolation-image-wrapper').empty().append(image);
 }
 
+function initMapOverlayPlayer() {
+  var player = document.querySelector('[data-map-player]');
+  if (!player) {
+    return;
+  }
+
+  var playerVideo = document.getElementById('newtphys-map-video');
+  var buttons = Array.prototype.slice.call(player.querySelectorAll('.map-toggle-button'));
+  var sceneButtons = Array.prototype.slice.call(player.querySelectorAll('.map-scene-button'));
+
+  if (!playerVideo || !buttons.length || !sceneButtons.length) {
+    return;
+  }
+
+  var activeScenePath = playerVideo.dataset.scenePath || '';
+
+  function buildSceneAssetPath(fileName) {
+    return activeScenePath + '/' + fileName;
+  }
+
+  function updateButtonState(activeButton) {
+    buttons.forEach(function(button) {
+      var isActive = button === activeButton;
+      button.classList.toggle('is-active', isActive);
+      button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
+  }
+
+  function updateSceneButtonState(activeButton) {
+    sceneButtons.forEach(function(button) {
+      var isActive = button === activeButton;
+      button.classList.toggle('is-active', isActive);
+      button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
+  }
+
+  function getActiveMapButton() {
+    for (var i = 0; i < buttons.length; i++) {
+      if (buttons[i].classList.contains('is-active')) {
+        return buttons[i];
+      }
+    }
+
+    return buttons[0];
+  }
+
+  function setVideoSource(fileName, shouldAutoplay) {
+    if (!fileName || !activeScenePath) {
+      return;
+    }
+
+    playerVideo.dataset.videoFile = fileName;
+    var nextSource = buildSceneAssetPath(fileName);
+    var normalizedNextSource = nextSource.replace(/^\.\//, '');
+    var currentSource = playerVideo.currentSrc || '';
+
+    if (currentSource.endsWith(normalizedNextSource)) {
+      if (shouldAutoplay) {
+        var resumedPlayPromise = playerVideo.play();
+        if (resumedPlayPromise && typeof resumedPlayPromise.catch === 'function') {
+          resumedPlayPromise.catch(function() {});
+        }
+      }
+      return;
+    }
+
+    playerVideo.src = nextSource;
+    playerVideo.load();
+
+    if (shouldAutoplay) {
+      var playPromise = playerVideo.play();
+      if (playPromise && typeof playPromise.catch === 'function') {
+        playPromise.catch(function() {});
+      }
+    }
+  }
+
+  function activateScene(button) {
+    updateSceneButtonState(button);
+    activeScenePath = button.dataset.scenePath || activeScenePath;
+    playerVideo.dataset.scenePath = activeScenePath;
+    setVideoSource(getActiveMapButton().dataset.videoFile || '_fps-25_render.mp4', !playerVideo.paused);
+  }
+
+  function activateMap(button) {
+    updateButtonState(button);
+    setVideoSource(button.dataset.videoFile || '_fps-25_render.mp4', !playerVideo.paused);
+  }
+
+  buttons.forEach(function(button) {
+    button.addEventListener('click', function() {
+      activateMap(button);
+    });
+  });
+
+  sceneButtons.forEach(function(button) {
+    button.addEventListener('click', function() {
+      activateScene(button);
+    });
+  });
+
+  var initialSceneButton = player.querySelector('.map-scene-button.is-active') || sceneButtons[0];
+  updateSceneButtonState(initialSceneButton);
+  activeScenePath = initialSceneButton.dataset.scenePath || '';
+  playerVideo.dataset.scenePath = activeScenePath;
+
+  var initialMapButton = getActiveMapButton();
+  updateButtonState(initialMapButton);
+  playerVideo.dataset.videoFile = initialMapButton.dataset.videoFile || '_fps-25_render.mp4';
+}
+
 
 $(document).ready(function() {
     // Check for click events on the navbar burger icon
@@ -59,5 +170,6 @@ $(document).ready(function() {
     }
 
     bulmaSlider.attach();
+    initMapOverlayPlayer();
 
 })

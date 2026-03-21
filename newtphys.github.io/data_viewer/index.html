@@ -719,10 +719,16 @@
                 <select id="questionSelect" aria-describedby="filtersHelp"></select>
               </div>
             </div>
+            <div class="filter-field">
+              <label class="label" for="objectCountSelect">Object Count</label>
+              <div class="select is-fullwidth">
+                <select id="objectCountSelect" aria-describedby="filtersHelp"></select>
+              </div>
+            </div>
           </div>
 
           <p id="filtersHelp" class="help status-note is-hidden-visually">
-            The three dropdowns are linked. Changing category updates subcategory choices, and changing subcategory updates question ids.
+            The dropdowns are linked. Changing the question updates the available object-count choices extracted from the simulation folder path.
           </p>
 
           <div class="summary-row">
@@ -778,6 +784,7 @@
       categorySelect: document.getElementById("categorySelect"),
       subcategorySelect: document.getElementById("subcategorySelect"),
       questionSelect: document.getElementById("questionSelect"),
+      objectCountSelect: document.getElementById("objectCountSelect"),
       resultSummary: document.getElementById("resultSummary"),
       pageIndicator: document.getElementById("pageIndicator"),
       pageIndicatorBottom: document.getElementById("pageIndicatorBottom"),
@@ -792,6 +799,7 @@
     const state = {
       data: null,
       answerByIdx: new Map(),
+      objectCountBySimulationIndex: [],
       categories: [],
       questionMetaByCategory: new Map(),
       questionMetaCounts: [],
@@ -799,6 +807,7 @@
       selectedCategory: "",
       selectedSubcategory: "",
       selectedQuestionMetaIndex: -1,
+      selectedObjectCount: "all",
       currentPage: 1,
     };
 
@@ -928,6 +937,12 @@
     function getSimulationFolder(relativePath) {
       const parts = String(relativePath).split("/").filter(Boolean);
       return parts.length ? parts[parts.length - 1] : String(relativePath);
+    }
+
+    function getObjectCount(relativePath) {
+      const parts = String(relativePath).split("/").filter(Boolean);
+      const value = Number(parts[1]);
+      return Number.isFinite(value) ? value : null;
     }
 
     function buildImageUrl(relativePath, frameId) {
@@ -1241,6 +1256,18 @@
         .sort((left, right) => left.questionId.localeCompare(right.questionId));
     }
 
+    function getAvailableObjectCounts() {
+      const counts = new Map();
+      getCurrentRecords().forEach((record) => {
+        const objectCount = state.objectCountBySimulationIndex[record[0]];
+        if (!Number.isFinite(objectCount)) {
+          return;
+        }
+        counts.set(objectCount, (counts.get(objectCount) || 0) + 1);
+      });
+      return Array.from(counts.entries()).sort((left, right) => left[0] - right[0]);
+    }
+
     function populateCategories() {
       elements.categorySelect.innerHTML = "";
       state.categories.forEach((category) => {
@@ -1291,10 +1318,30 @@
       elements.questionSelect.value = String(state.selectedQuestionMetaIndex);
     }
 
+    function populateObjectCounts() {
+      const objectCounts = getAvailableObjectCounts();
+      const validValues = ["all", ...objectCounts.map(([count]) => String(count))];
+      if (!validValues.includes(String(state.selectedObjectCount))) {
+        state.selectedObjectCount = "all";
+      }
+
+      elements.objectCountSelect.innerHTML = "";
+      const total = objectCounts.reduce((sum, [, count]) => sum + count, 0);
+      elements.objectCountSelect.appendChild(
+        createOption("all", `All object counts (${numberFormatter.format(total)})`),
+      );
+      objectCounts.forEach(([count, totalCount]) => {
+        const label = `${count} object${count === 1 ? "" : "s"} (${numberFormatter.format(totalCount)})`;
+        elements.objectCountSelect.appendChild(createOption(count, label));
+      });
+      elements.objectCountSelect.value = String(state.selectedObjectCount);
+    }
+
     function syncSelects() {
       populateCategories();
       populateSubcategories();
       populateQuestions();
+      populateObjectCounts();
     }
 
     function getCurrentRecords() {
@@ -1302,6 +1349,16 @@
         return [];
       }
       return state.recordsByQuestionMetaIndex[state.selectedQuestionMetaIndex] || [];
+    }
+
+    function getFilteredRecords() {
+      const records = getCurrentRecords();
+      if (state.selectedObjectCount === "all") {
+        return records;
+      }
+
+      return records.filter((record) =>
+        String(state.objectCountBySimulationIndex[record[0]]) === String(state.selectedObjectCount));
     }
 
     function createCard(record) {
@@ -1457,7 +1514,7 @@
     }
 
     function renderResults() {
-      const currentRecords = getCurrentRecords();
+      const currentRecords = getFilteredRecords();
       const [questionId, category, subcategory] = state.selectedQuestionMetaIndex >= 0
         ? getQuestionMeta(state.selectedQuestionMetaIndex)
         : ["", "", ""];
@@ -1494,12 +1551,18 @@
 
       if (totalRecords === 0) {
         elements.resultSummary.innerHTML =
-          `<strong>${questionId}</strong> in <strong>${category}</strong> / <strong>${subcategory}</strong> has no records.`;
+          `<strong>${questionId}</strong> in <strong>${category}</strong> / <strong>${subcategory}</strong>` +
+          (state.selectedObjectCount === "all"
+            ? " has no records."
+            : ` has no records for <strong>${state.selectedObjectCount}</strong> objects.`);
         return;
       }
 
       elements.resultSummary.innerHTML =
         `<strong>${questionId}</strong> in <strong>${category}</strong> / <strong>${subcategory}</strong> ` +
+        (state.selectedObjectCount === "all"
+          ? ""
+          : `for <strong>${state.selectedObjectCount}</strong> objects `) +
         `showing ${numberFormatter.format(visibleRecords.length)} of ${numberFormatter.format(totalRecords)} records.`;
     }
 
@@ -1540,11 +1603,14 @@
       state.questionMetaByCategory = questionMetaByCategory;
       state.questionMetaCounts = questionMetaCounts;
       state.recordsByQuestionMetaIndex = recordsByQuestionMetaIndex;
+      state.objectCountBySimulationIndex = data.simulations.map(([, relativePath]) =>
+        getObjectCount(relativePath));
       state.categories = Array.from(questionMetaByCategory.keys()).sort((a, b) => a.localeCompare(b));
       state.selectedCategory = state.categories[0] || "";
       state.selectedSubcategory = getSubcategories(state.selectedCategory)[0] || "";
       const initialQuestion = getQuestionEntries(state.selectedCategory, state.selectedSubcategory)[0];
       state.selectedQuestionMetaIndex = initialQuestion ? initialQuestion.index : -1;
+      state.selectedObjectCount = "all";
     }
 
     function buildAnswerLookup(answerData) {
@@ -1608,17 +1674,25 @@
         state.selectedCategory = event.target.value;
         state.selectedSubcategory = "";
         state.selectedQuestionMetaIndex = -1;
+        state.selectedObjectCount = "all";
         applySelection();
       });
 
       elements.subcategorySelect.addEventListener("change", (event) => {
         state.selectedSubcategory = event.target.value;
         state.selectedQuestionMetaIndex = -1;
+        state.selectedObjectCount = "all";
         applySelection();
       });
 
       elements.questionSelect.addEventListener("change", (event) => {
         state.selectedQuestionMetaIndex = Number(event.target.value);
+        state.selectedObjectCount = "all";
+        applySelection();
+      });
+
+      elements.objectCountSelect.addEventListener("change", (event) => {
+        state.selectedObjectCount = event.target.value;
         applySelection();
       });
 

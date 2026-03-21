@@ -127,6 +127,159 @@ body {
   margin: 0;
 }
 
+.map-overlay-section {
+  padding-top: 1rem;
+}
+
+.map-overlay-card {
+  background: linear-gradient(180deg, #fbfcff 0%, #f2f5fb 100%);
+  border: 1px solid rgba(34, 52, 84, 0.08);
+  border-radius: 18px;
+  box-shadow: 0 18px 40px rgba(27, 39, 66, 0.08);
+  padding: 1.5rem;
+}
+
+.map-overlay-intro {
+  color: #4d5a73;
+  margin-bottom: 1rem !important;
+}
+
+.map-player-shell {
+  position: relative;
+}
+
+.map-player-stage {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #0d111a;
+  aspect-ratio: 1000 / 562;
+}
+
+.map-base-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #0d111a;
+}
+
+.map-player-controls {
+  position: absolute;
+  z-index: 2;
+  top: 0.9rem;
+  left: 0.9rem;
+  right: 0.9rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  justify-content: center;
+  padding: 0.7rem;
+  background: linear-gradient(180deg, rgba(9, 14, 22, 0.86) 0%, rgba(9, 14, 22, 0.58) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  backdrop-filter: blur(10px);
+}
+
+.map-toggle-button {
+  appearance: none;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #f5f7fb;
+  cursor: pointer;
+  font-family: 'Google Sans', sans-serif;
+  font-size: 0.9rem;
+  line-height: 1.1;
+  padding: 0.65rem 1rem;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.map-toggle-button:hover,
+.map-toggle-button:focus-visible {
+  background: rgba(255, 255, 255, 0.24);
+  color: #fff;
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.map-toggle-button.is-active {
+  background: #ffd24d;
+  color: #182033;
+}
+
+.map-scene-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.map-scene-label {
+  color: #4d5a73;
+  font-family: 'Google Sans', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.map-scene-button {
+  appearance: none;
+  border: 1px solid rgba(34, 52, 84, 0.14);
+  border-radius: 999px;
+  background: #fff;
+  color: #24314d;
+  cursor: pointer;
+  font-family: 'Google Sans', sans-serif;
+  font-size: 0.9rem;
+  line-height: 1.1;
+  padding: 0.65rem 1rem;
+  transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.map-scene-button:hover,
+.map-scene-button:focus-visible {
+  border-color: rgba(34, 52, 84, 0.28);
+  background: #f7f9fd;
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.map-scene-button.is-active {
+  background: #182033;
+  border-color: #182033;
+  color: #fff;
+}
+
+@media screen and (max-width: 768px) {
+  .map-overlay-card {
+    padding: 1rem;
+  }
+
+  .map-player-controls {
+    top: 0.7rem;
+    left: 0.7rem;
+    right: 0.7rem;
+    gap: 0.45rem;
+    padding: 0.6rem;
+  }
+
+  .map-toggle-button {
+    font-size: 0.82rem;
+    padding: 0.55rem 0.8rem;
+  }
+
+  .map-scene-switcher {
+    gap: 0.5rem;
+  }
+
+  .map-scene-button {
+    font-size: 0.82rem;
+    padding: 0.55rem 0.85rem;
+  }
+}
+
 
 .interpolation-panel {
   background: #f5f5f5;

@@ -13,6 +13,7 @@ main.synctex.gz
 *.gz
 *.bbl
 *.blg
+*.pyc
 
 /*
 !/.gitignore
@@ -23,3 +24,7 @@ main.synctex.gz
 !/newtphys.github.io/**
 !/data_viewer/
 !/data_viewer/**
+
+newtphys.github.io/video_newtphys_maps/**_og
+newtphys.github.io/data_viewer/val_answer_run_28_general.json
+newtphys.github.io/data_viewer/test_run_28_general-all_karo_10K.json

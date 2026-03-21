@@ -159,9 +159,123 @@
 </section>
 
 
+<section class="section map-overlay-section">
+  <div class="container is-max-desktop">
+    <div class="map-overlay-card">
+      <div class="content has-text-centered">
+        <h2 class="title is-4">Rendered Videos + Physics Map Overlay</h2>
+        <p class="map-overlay-intro">
+          Select a precomputed map visualization.
+        </p>
+      </div>
+
+      <div class="map-player-shell" data-map-player>
+        <div class="map-player-controls" role="toolbar" aria-label="Physics map overlay controls">
+          <button class="map-toggle-button is-active"
+                  type="button"
+                  data-video-file="_fps-25_render.mp4"
+                  aria-pressed="true">
+            RGB only
+          </button>
+          <button class="map-toggle-button"
+                  type="button"
+                  data-video-file="_fps-25_materials.mp4"
+                  aria-pressed="false">
+            Materials
+          </button>
+          <button class="map-toggle-button"
+                  type="button"
+                  data-video-file="_fps-25_sceneflow.mp4"
+                  aria-pressed="false">
+            Scene flow
+          </button>
+          <button class="map-toggle-button"
+                  type="button"
+                  data-video-file="_fps-25_force_collision.mp4"
+                  aria-pressed="false">
+            Collision force
+          </button>
+          <button class="map-toggle-button"
+                  type="button"
+                  data-video-file="_fps-25_instances.mp4"
+                  aria-pressed="false">
+            Instances
+          </button>
+        </div>
+
+        <div class="map-player-stage">
+          <video id="newtphys-map-video"
+                 class="map-base-video"
+                 autoplay
+                 controls
+                 muted
+                 loop
+                 playsinline
+                 preload="auto"
+                 data-scene-path="./video_newtphys_maps/bench"
+                 data-video-file="_fps-25_render.mp4">
+            <source src="./video_newtphys_maps/bench/_fps-25_render.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+
+        <div class="map-scene-switcher" role="toolbar" aria-label="Scene selector">
+          <span class="map-scene-label">Scene</span>
+          <button class="map-scene-button is-active"
+                  type="button"
+                  data-scene-path="./video_newtphys_maps/bench"
+                  aria-pressed="true">
+            bench
+          </button>
+          <button class="map-scene-button"
+                  type="button"
+                  data-scene-path="./video_newtphys_maps/horse_statue"
+                  aria-pressed="false">
+            horse statue
+          </button>
+          <button class="map-scene-button"
+                  type="button"
+                  data-scene-path="./video_newtphys_maps/park"
+                  aria-pressed="false">
+            park
+          </button>
+          <button class="map-scene-button"
+                  type="button"
+                  data-scene-path="./video_newtphys_maps/ping_pong"
+                  aria-pressed="false">
+            ping pong
+          </button>
+          <button class="map-scene-button"
+                  type="button"
+                  data-scene-path="./video_newtphys_maps/pink_tree"
+                  aria-pressed="false">
+            pink tree
+          </button>
+          <button class="map-scene-button"
+                  type="button"
+                  data-scene-path="./video_newtphys_maps/shop"
+                  aria-pressed="false">
+            shop
+          </button>
+          <button class="map-scene-button"
+                  type="button"
+                  data-scene-path="./video_newtphys_maps/tree"
+                  aria-pressed="false">
+            tree
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
 <section class="hero is-light is-small">
   <div class="hero-body">
     <div class="container">
+       <div class="content has-text-centered">
+        <h2 class="title is-4">More Rendered Videos</h2> 
+      </div>
       <div id="results-carousel" class="carousel results-carousel">
         <div class="item item-sim-overview">
           <video autoplay controls muted loop playsinline height="100%">
@@ -223,10 +337,7 @@
                     type="video/mp4">
           </video>
         </div>
-      </div>
-      <p class="has-text-centered">
-        Some rendered simulations
-      </p>
+      </div> 
     </div>
   </div>
 </section>
